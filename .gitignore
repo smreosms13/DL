@@ -7,3 +7,5 @@ sources/
 coarse_labels/
 wandb/
 LICENSE
+__pycache__/
+.idea/
