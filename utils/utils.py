@@ -5,8 +5,8 @@ import random
 
 import numpy as np
 import torchvision.transforms as transforms
-from PIL import Image, ImageEnhance, ImageOps
 from PIL import ImageFilter
+from utils.ops import *
 
 # __all__ = ['Cutout', 'ImageNetPolicy', 'CIFAR10Policy', 'CIFAR10PolicyAll', 'SVHNPolicy', 'SubPolicy', 'RandAugment', 'GaussianBlur', 'DMixTransform', 'get_augment']
 __all__ = ['DMixTransform', 'get_augment', 'adjust_learning_rate']
@@ -388,7 +388,7 @@ class SubPolicy(object):
             "translatey": np.linspace(0, 150 / 331, 10),
             "rotate": np.linspace(0, 30, 10),
             "color": np.linspace(0.0, 0.9, 10),
-            "posterize": np.round(np.linspace(8, 4, 10), 0).astype(np.int),
+            "posterize": np.round(np.linspace(8, 4, 10), 0).astype(int),
             "solarize": np.linspace(256, 0, 10),
             "contrast": np.linspace(0.0, 0.9, 10),
             "sharpness": np.linspace(0.0, 0.9, 10),
@@ -396,7 +396,7 @@ class SubPolicy(object):
             "autocontrast": [0] * 10,
             "equalize": [0] * 10,
             "invert": [0] * 10,
-            "cutout": np.round(np.linspace(0, 20, 10), 0).astype(np.int),
+            "cutout": np.round(np.linspace(0, 20, 10), 0).astype(int),
         }
 
         # from https://stackoverflow.com/questions/5252170/specify-image-filling-color-when-rotating-in-python-with-pil-and-setting-expand
@@ -407,52 +407,22 @@ class SubPolicy(object):
             ).convert(img.mode)
 
         func = {
-            "shearx": lambda img, magnitude: img.transform(
-                img.size,
-                Image.AFFINE,
-                (1, magnitude * random.choice([-1, 1]), 0, 0, 1, 0),
-                Image.BICUBIC,
-                fillcolor=fillcolor,
-            ),
-            "sheary": lambda img, magnitude: img.transform(
-                img.size,
-                Image.AFFINE,
-                (1, 0, 0, magnitude * random.choice([-1, 1]), 1, 0),
-                Image.BICUBIC,
-                fillcolor=fillcolor,
-            ),
-            "translatex": lambda img, magnitude: img.transform(
-                img.size,
-                Image.AFFINE,
-                (1, 0, magnitude * img.size[0] * random.choice([-1, 1]), 0, 1, 0),
-                fillcolor=fillcolor,
-            ),
-            "translatey": lambda img, magnitude: img.transform(
-                img.size,
-                Image.AFFINE,
-                (1, 0, 0, 0, 1, magnitude * img.size[1] * random.choice([-1, 1])),
-                fillcolor=fillcolor,
-            ),
-            "rotate": lambda img, magnitude: rotate_with_fill(img, magnitude),
-            # "rotate": lambda img, magnitude: img.rotate(magnitude * random.choice([-1, 1])),
-            "color": lambda img, magnitude: ImageEnhance.Color(img).enhance(
-                1 + magnitude * random.choice([-1, 1])
-            ),
-            "posterize": lambda img, magnitude: ImageOps.posterize(img, magnitude),
-            "solarize": lambda img, magnitude: ImageOps.solarize(img, magnitude),
-            "contrast": lambda img, magnitude: ImageEnhance.Contrast(img).enhance(
-                1 + magnitude * random.choice([-1, 1])
-            ),
-            "sharpness": lambda img, magnitude: ImageEnhance.Sharpness(img).enhance(
-                1 + magnitude * random.choice([-1, 1])
-            ),
-            "brightness": lambda img, magnitude: ImageEnhance.Brightness(img).enhance(
-                1 + magnitude * random.choice([-1, 1])
-            ),
-            "autocontrast": lambda img, magnitude: ImageOps.autocontrast(img),
-            "equalize": lambda img, magnitude: ImageOps.equalize(img),
-            "invert": lambda img, magnitude: ImageOps.invert(img),
-            "cutout": lambda img, magnitude: Cutout(magnitude)(img),
+            "shearx": ShearX(fillcolor=fillcolor),
+            "sheary": ShearY(fillcolor=fillcolor),
+            "translatex": TranslateX(fillcolor=fillcolor),
+            "translatey": TranslateY(fillcolor=fillcolor),
+            "rotate": Rotate(),
+            "color": Color(),
+            "posterize": Posterize(),
+            "solarize": Solarize(),
+            "contrast": Contrast(),
+            "sharpness": Sharpness(),
+            "brightness": Brightness(),
+            "autocontrast": AutoContrast(),
+            "equalize": Equalize(),
+            "invert": Invert(),
+            "cutout": Cutout()
+            #"cutout": lambda img, magnitude: Cutout(magnitude)(img),
         }
 
         self.p1 = p1

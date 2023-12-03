@@ -47,7 +47,7 @@ parser.add_argument('--w', default=0.5, type=float, help='weight of self-invaria
 parser.add_argument('--t', default=0.05, type=float, help='softmax temperature weight for soft label')
 
 # logger configs
-parser.add_argument('--wandb_id', type=str, help='wandb user id')
+parser.add_argument('--wandb_id',type=str, help='wandb user id')
 
 
 # train for one epoch
