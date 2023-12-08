@@ -31,7 +31,7 @@ parser.add_argument('--t0', default=0.1, type=float, help='softmax temperature f
 
 # train configs:
 parser.add_argument('--lr', '--learning-rate', default=0.02, type=float, metavar='LR', help='initial learning rate', dest='lr')
-parser.add_argument('--epochs', default=200, type=int, metavar='N', help='number of total epochs')
+parser.add_argument('--epochs', default=100, type=int, metavar='N', help='number of total epochs')
 parser.add_argument('--warm_up', default=5, type=int, metavar='N', help='number of warmup epochs')
 parser.add_argument('--batch_size', default=128, type=int, metavar='N', help='mini-batch size')
 parser.add_argument('--wd', default=5e-4, type=float, metavar='W', help='weight decay')
@@ -43,7 +43,7 @@ parser.add_argument('--gpu_id', default='0', type=str, help='gpuid')
 parser.add_argument('--mode', default='maskcon', type=str, choices=['maskcon', 'grafit', 'coins'], help='training mode')
 
 # maskcon-specific hyperparameters:
-parser.add_argument('--w', default=0.5, type=float, help='weight of self-invariance')  # not-used if maskcon
+parser.add_argument('--w', default=0.5, type=float, help='weight of self-invariance')
 parser.add_argument('--t', default=0.05, type=float, help='softmax temperature weight for soft label')
 
 # logger configs
@@ -57,6 +57,8 @@ def train(net, data_loader, train_optimizer, epoch, args):
     train_bar = tqdm(data_loader)
     for i, [[im_k, im_q], coarse_targets, fine_targets] in enumerate(train_bar):
         adjust_learning_rate(train_optimizer, args.warm_up, epoch, args.epochs, args.lr, i, data_loader.__len__())
+        coarse_targets = coarse_targets.type(torch.LongTensor)
+        fine_targets = fine_targets.type(torch.LongTensor)
         im_k, im_q, coarse_targets, fine_targets = im_k.cuda(), im_q.cuda(), coarse_targets.cuda(), fine_targets.cuda()
         if args.mode == 'grafit' or args.mode == 'coins':
             loss = net.forward_explicit(im_k, im_q, coarse_targets, args)
