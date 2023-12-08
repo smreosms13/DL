@@ -1,10 +1,10 @@
 data/
-datasets/
 *.json
 *.tar.gz
 smreosms13/
 sources/
 coarse_labels/
+datasets/
 wandb/
 LICENSE
 __pycache__/
