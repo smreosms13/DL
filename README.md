@@ -56,6 +56,7 @@ A typo in `utils.py` has been corrected.
 ## Preparation
 - Python: 3.11.5
 - Anaconda: 23.10.0
+  - You can recreate the required environment using the provided `packagelist.txt` file in the `/sources` directory
 - PyTorch: 2.0.1
 - CUDA: 11.7.0
 - torchvision: 0.15.2
