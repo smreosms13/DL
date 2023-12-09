@@ -5,6 +5,9 @@ smreosms13/
 sources/
 coarse_labels/
 datasets/
+!/dataset/__init__.py
+!/dataset/cifar100_20.py
+!/dataset/cifartoy.py
 wandb/
 LICENSE
 **/__pycache__/
