@@ -7,5 +7,6 @@ coarse_labels/
 datasets/
 wandb/
 LICENSE
-__pycache__/
+**/__pycache__/
 .idea/
+*.pyc
